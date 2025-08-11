@@ -1,0 +1,735 @@
+!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindWell - Your Mental Health Companion</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        h1 {
+            color: #4a5568;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: #718096;
+            font-size: 1.2rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .feature-title {
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #4a5568;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .feature-content {
+            display: none;
+            margin-top: 15px;
+        }
+
+        .feature-card.active .feature-content {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .emergency-btn {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+            font-size: 18px;
+            font-weight: bold;
+            padding: 15px 30px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 107, 107, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0); }
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            margin: 5px 0;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .mood-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 10px 0;
+        }
+
+        .mood-btn {
+            font-size: 30px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 50%;
+            transition: transform 0.2s ease;
+        }
+
+        .mood-btn:hover {
+            transform: scale(1.2);
+        }
+
+        .mood-btn.selected {
+            background: rgba(102, 126, 234, 0.2);
+            transform: scale(1.1);
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            margin: 5px 0;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        .checklist-item.completed {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .checklist-item input[type="checkbox"] {
+            width: auto;
+            margin-right: 10px;
+        }
+
+        .points-display {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            color: white;
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+
+        .chat-container {
+            height: 300px;
+            overflow-y: auto;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 15px;
+            background: white;
+            margin-bottom: 15px;
+        }
+
+        .chat-message {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .user-message {
+            background: #667eea;
+            color: white;
+            margin-left: 20%;
+        }
+
+        .bot-message {
+            background: #f7fafc;
+            color: #4a5568;
+            margin-right: 20%;
+        }
+
+        .breathing-circle {
+            width: 200px;
+            height: 200px;
+            border: 4px solid #667eea;
+            border-radius: 50%;
+            margin: 20px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: #667eea;
+            transition: transform 4s ease-in-out;
+        }
+
+        .breathing-circle.inhale {
+            transform: scale(1.5);
+        }
+
+        .breathing-circle.exhale {
+            transform: scale(1);
+        }
+
+        .music-player {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            text-align: center;
+        }
+
+        .quote-display {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            font-style: italic;
+            font-size: 1.1rem;
+            margin: 15px 0;
+        }
+
+        .voice-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+            margin: 15px 0;
+        }
+
+        .voice-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .voice-btn:hover {
+            background: #5a67d8;
+            transform: scale(1.1);
+        }
+
+        .voice-btn.recording {
+            background: #ff6b6b;
+            animation: pulse 1s infinite;
+        }
+
+        @media (max-width: 768px) {
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .mood-buttons {
+                justify-content: center;
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌟 MindWell</h1>
+            <p class="subtitle">Your Complete Mental Health & Wellness Companion</p>
+        </header>
+
+        <div class="features-grid">
+            <!-- Medical FAQ Chatbot -->
+            <div class="feature-card" data-feature="chatbot">
+                <div class="feature-title">
+                    🤖 Medical FAQ Chatbot
+                    <button class="btn" onclick="toggleFeature('chatbot')">Open</button>
+                </div>
+                <div class="feature-content">
+                    <div class="chat-container" id="chatContainer"></div>
+                    <input type="text" id="chatInput" placeholder="Ask a health question..." onkeypress="handleChatEnter(event)">
+                    <button class="btn" onclick="sendChatMessage()">Send</button>
+                </div>
+            </div>
+
+            <!-- Symptom Checker -->
+            <div class="feature-card" data-feature="symptoms">
+                <div class="feature-title">
+                    🩺 Symptom Checker
+                    <button class="btn" onclick="toggleFeature('symptoms')">Check</button>
+                </div>
+                <div class="feature-content">
+                    <textarea id="symptomsInput" rows="4" placeholder="Describe your symptoms..."></textarea>
+                    <button class="btn" onclick="checkSymptoms()">Analyze Symptoms</button>
+                    <div id="symptomsResult"></div>
+                </div>
+            </div>
+
+            <!-- Mood Tracker -->
+            <div class="feature-card" data-feature="mood">
+                <div class="feature-title">
+                    😊 Mood Tracker & Journal
+                    <button class="btn" onclick="toggleFeature('mood')">Track</button>
+                </div>
+                <div class="feature-content">
+                    <p>How are you feeling today?</p>
+                    <div class="mood-buttons">
+                        <button class="mood-btn" onclick="selectMood('😢', 1)">😢</button>
+                        <button class="mood-btn" onclick="selectMood('😕', 2)">😕</button>
+                        <button class="mood-btn" onclick="selectMood('😐', 3)">😐</button>
+                        <button class="mood-btn" onclick="selectMood('🙂', 4)">🙂</button>
+                        <button class="mood-btn" onclick="selectMood('😊', 5)">😊</button>
+                    </div>
+                    <textarea id="journalEntry" rows="4" placeholder="Write about your day..."></textarea>
+                    <button class="btn" onclick="saveMoodEntry()">Save Entry</button>
+                    <div id="moodSuggestions"></div>
+                </div>
+            </div>
+
+            <!-- Mental Health Exercises -->
+            <div class="feature-card" data-feature="exercises">
+                <div class="feature-title">
+                    🧘 Mental Health Exercises
+                    <button class="btn" onclick="toggleFeature('exercises')">Practice</button>
+                </div>
+                <div class="feature-content">
+                    <button class="btn" onclick="startBreathing()">Breathing Exercise</button>
+                    <button class="btn" onclick="startMeditation()">Meditation</button>
+                    <button class="btn" onclick="stressRelief()">Stress Relief</button>
+                    <div id="exerciseArea">
+                        <div class="breathing-circle hidden" id="breathingCircle">Breathe</div>
+                        <div id="exerciseInstructions"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Emergency Panic Button -->
+            <div class="feature-card" data-feature="emergency">
+                <div class="feature-title">
+                    🆘 Emergency Support
+                    <button class="emergency-btn" onclick="emergencyAlert()">EMERGENCY</button>
+                </div>
+                <div class="feature-content">
+                    <p>Crisis Hotlines:</p>
+                    <p>🇺🇸 National Suicide Prevention: 988</p>
+                    <p>🇺🇸 Crisis Text Line: Text HOME to 741741</p>
+                    <p>🌍 International: <a href="https://findahelpline.com" target="_blank">findahelpline.com</a></p>
+                    <button class="btn" onclick="sendEmergencyAlert()">Send Alert to Contacts</button>
+                </div>
+            </div>
+
+            <!-- Mood-Based Music & Quotes -->
+            <div class="feature-card" data-feature="music">
+                <div class="feature-title">
+                    🎵 Mood-Based Music & Quotes
+                    <button class="btn" onclick="toggleFeature('music')">Explore</button>
+                </div>
+                <div class="feature-content">
+                    <button class="btn" onclick="playMoodMusic('happy')">Happy Music</button>
+                    <button class="btn" onclick="playMoodMusic('calm')">Calm Music</button>
+                    <button class="btn" onclick="playMoodMusic('energetic')">Energetic Music</button>
+                    <div class="music-player hidden" id="musicPlayer">
+                        <p>🎵 Now Playing: Relaxing Nature Sounds</p>
+                        <audio controls>
+                            <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmYdBjeIzO/VhjMGJnnD7+OJPwgVY7fp56NOFAxHmuMt" type="audio/wav">
+                        </audio>
+                    </div>
+                    <div class="quote-display" id="quoteDisplay">
+                        "Every day is a new beginning. Take a deep breath, smile, and start again."
+                    </div>
+                    <button class="btn" onclick="getNewQuote()">New Quote</button>
+                </div>
+            </div>
+
+            <!-- Daily Wellness Checklist -->
+            <div class="feature-card" data-feature="checklist">
+                <div class="feature-title">
+                    📋 Daily Wellness Checklist
+                    <button class="btn" onclick="toggleFeature('checklist')">View</button>
+                </div>
+                <div class="feature-content">
+                    <div class="points-display" id="pointsDisplay">Wellness Points: 0</div>
+                    <div id="checklistItems">
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updatePoints(this)" data-points="10">
+                            <span>Drink 8 glasses of water (10 pts)</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updatePoints(this)" data-points="15">
+                            <span>Exercise for 30 minutes (15 pts)</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updatePoints(this)" data-points="10">
+                            <span>Meditate for 10 minutes (10 pts)</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updatePoints(this)" data-points="5">
+                            <span>Write in journal (5 pts)</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updatePoints(this)" data-points="10">
+                            <span>Get 7+ hours of sleep (10 pts)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Voice Assistant -->
+            <div class="feature-card" data-feature="voice">
+                <div class="feature-title">
+                    🎙️ Voice Assistant
+                    <button class="btn" onclick="toggleFeature('voice')">Activate</button>
+                </div>
+                <div class="feature-content">
+                    <div class="voice-controls">
+                        <button class="voice-btn" id="voiceBtn" onclick="toggleVoiceRecording()">🎤</button>
+                        <span id="voiceStatus">Click to start voice interaction</span>
+                    </div>
+                    <div id="voiceTranscript"></div>
+                    <div id="voiceResponse"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentMood = 0;
+        let wellnessPoints = parseInt(localStorage.getItem('wellnessPoints') || '0');
+        let isRecording = false;
+        let recognition = null;
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', function() {
+            updatePointsDisplay();
+            loadMoodHistory();
+            initializeVoiceRecognition();
+        });
+
+        function toggleFeature(featureId) {
+            const card = document.querySelector(`[data-feature="${featureId}"]`);
+            card.classList.toggle('active');
+        }
+
+        // Chatbot functionality
+        function handleChatEnter(event) {
+            if (event.key === 'Enter') {
+                sendChatMessage();
+            }
+        }
+
+        function sendChatMessage() {
+            const input = document.getElementById('chatInput');
+            const container = document.getElementById('chatContainer');
+            const message = input.value.trim();
+            
+            if (message) {
+                // Add user message
+                container.innerHTML += `<div class="chat-message user-message">${message}</div>`;
+                
+                // Simulate bot response
+                setTimeout(() => {
+                    const response = generateMedicalResponse(message);
+                    container.innerHTML += `<div class="chat-message bot-message">${response}</div>`;
+                    container.scrollTop = container.scrollHeight;
+                }, 1000);
+                
+                input.value = '';
+                container.scrollTop = container.scrollHeight;
+            }
+        }
+
+        function generateMedicalResponse(question) {
+            const responses = {
+                'headache': 'Headaches can be caused by stress, dehydration, lack of sleep, or eye strain. Try drinking water, resting in a dark room, and applying a cold compress. If headaches persist or worsen, consult a healthcare provider.',
+                'fever': 'Fever is your body\'s natural response to infection. Stay hydrated, rest, and monitor your temperature. Seek medical attention if fever exceeds 103°F (39.4°C) or persists for more than 3 days.',
+                'anxiety': 'Anxiety is common and manageable. Try deep breathing exercises, regular exercise, and mindfulness techniques. If anxiety interferes with daily life, consider speaking with a mental health professional.',
+                'sleep': 'Good sleep hygiene includes maintaining a consistent sleep schedule, avoiding screens before bed, and creating a comfortable sleep environment. Adults need 7-9 hours of sleep per night.',
+                'stress': 'Chronic stress can impact physical and mental health. Regular exercise, meditation, adequate sleep, and social support can help manage stress levels. Consider stress management techniques or counseling if needed.'
+            };
+            
+            const lowerQuestion = question.toLowerCase();
+            for (let key in responses) {
+                if (lowerQuestion.includes(key)) {
+                    return responses[key];
+                }
+            }
+            
+            return 'I understand your concern. While I can provide general health information, it\'s important to consult with a qualified healthcare provider for personalized medical advice. Is there a specific symptom or health topic you\'d like to know more about?';
+        }
+
+        // Symptom Checker
+        function checkSymptoms() {
+            const symptoms = document.getElementById('symptomsInput').value;
+            const resultDiv = document.getElementById('symptomsResult');
+            
+            if (symptoms.trim()) {
+                const analysis = analyzeSymptoms(symptoms);
+                resultDiv.innerHTML = `
+                    <div style="background: #f7fafc; padding: 15px; border-radius: 10px; margin-top: 15px;">
+                        <h4>Symptom Analysis:</h4>
+                        <p>${analysis}</p>
+                        <p style="color: #e53e3e; font-weight: bold; margin-top: 10px;">
+                            ⚠️ This is not a medical diagnosis. Please consult a healthcare provider for proper evaluation.
+                        </p>
+                    </div>
+                `;
+            }
+        }
+
+        function analyzeSymptoms(symptoms) {
+            const urgentSymptoms = ['chest pain', 'difficulty breathing', 'severe headache', 'high fever', 'bleeding'];
+            const lowerSymptoms = symptoms.toLowerCase();
+            
+            for (let urgent of urgentSymptoms) {
+                if (lowerSymptoms.includes(urgent)) {
+                    return `Your symptoms may require immediate medical attention. Please contact emergency services or visit the nearest emergency room if you're experiencing severe symptoms.`;
+                }
+            }
+            
+            return `Based on your symptoms, consider monitoring your condition and consulting with a healthcare provider if symptoms persist or worsen. Common causes could include viral infections, stress, or lifestyle factors. Stay hydrated, get adequate rest, and seek medical advice for proper evaluation.`;
+        }
+
+        // Mood Tracker
+        function selectMood(emoji, value) {
+            currentMood = value;
+            document.querySelectorAll('.mood-btn').forEach(btn => btn.classList.remove('selected'));
+            event.target.classList.add('selected');
+        }
+
+        function saveMoodEntry() {
+            const journal = document.getElementById('journalEntry').value;
+            const suggestions = document.getElementById('moodSuggestions');
+            
+            if (currentMood > 0) {
+                const entry = {
+                    mood: currentMood,
+                    journal: journal,
+                    date: new Date().toLocaleDateString()
+                };
+                
+                // Save to local storage
+                let moodHistory = JSON.parse(localStorage.getItem('moodHistory') || '[]');
+                moodHistory.push(entry);
+                localStorage.setItem('moodHistory', JSON.stringify(moodHistory));
+                
+                // Generate suggestions
+                const suggestion = getMoodSuggestions(currentMood);
+                suggestions.innerHTML = `
+                    <div style="background: #e6fffa; padding: 15px; border-radius: 10px; margin-top: 15px;">
+                        <h4>Personalized Suggestion:</h4>
+                        <p>${suggestion}</p>
+                    </div>
+                `;
+                
+                document.getElementById('journalEntry').value = '';
+                currentMood = 0;
+                document.querySelectorAll('.mood-btn').forEach(btn => btn.classList.remove('selected'));
+            }
+        }
+
+        function getMoodSuggestions(mood) {
+            const suggestions = {
+                1: "It sounds like you're having a tough day. Consider talking to a friend, practicing deep breathing, or engaging in a comforting activity like listening to music or taking a warm bath.",
+                2: "You're feeling down today. Try going for a walk, practicing gratitude by writing down three good things, or reaching out to someone you care about.",
+                3: "You're feeling neutral today. This is a good time to focus on self-care activities like reading, gentle exercise, or planning something you enjoy.",
+                4: "You're feeling good today! Consider sharing your positive energy with others, trying something new, or building on this momentum with activities you enjoy.",
+                5: "You're feeling great today! This is wonderful. Consider what contributed to this mood and how you can maintain these positive feelings."
+            };
+            return suggestions[mood] || "Keep tracking your mood to better understand patterns and what helps you feel your best.";
+        }
+
+        // Mental Health Exercises
+        function startBreathing() {
+            const circle = document.getElementById('breathingCircle');
+            const instructions = document.getElementById('exerciseInstructions');
+            
+            circle.classList.remove('hidden');
+            instructions.innerHTML = '<p>Follow the circle: Inhale as it expands, exhale as it contracts</p>';
+            
+            let isInhaling = true;
+            let count = 0;
+            
+            const breathingInterval = setInterval(() => {
+                if (isInhaling) {
+                    circle.classList.add('inhale');
+                    circle.textContent = 'Inhale';
+                    setTimeout(() => {
+                        circle.classList.remove('inhale');
+                        circle.textContent = 'Exhale';
+                    }, 4000);
+                }
+                
+                count++;
+                if (count >= 10) {
+                    clearInterval(breathingInterval);
+                    circle.classList.add('hidden');
+                    instructions.innerHTML = '<p>Great job! You completed 5 breathing cycles. How do you feel?</p>';
+                }
+                
+                isInhaling = !isInhaling;
+            }, 8000);
+        }
+
+        function startMeditation() {
+            const instructions = document.getElementById('exerciseInstructions');
+            instructions.innerHTML = `
+                <div style="background: #f7fafc; padding: 20px; border-radius: 10px;">
+                    <h4>5-Minute Mindfulness Meditation</h4>
+                    <p>1. Sit comfortably with your eyes closed</p>
+                    <p>2. Focus on your breath naturally flowing in and out</p>
+                    <p>3. When thoughts arise, gently return focus to your breath</p>
+                    <p>4. Notice sensations in your body without judgment</p>
+                    <p>5. Continue for 5 minutes, being present in this moment</p>
+                </div>
+            `;
+        }
+
+        function stressRelief() {
+            const instructions = document.getElementById('exerciseInstructions');
+            instructions.innerHTML = `
+                <div style="background: #f7fafc; padding: 20px; border-radius: 10px;">
+                    <h4>Quick Stress Relief Technique</h4>
+                    <p><strong>5-4-3-2-1 Grounding Exercise:</strong></p>
+                    <p>• Name 5 things you can see</p>
+                    <p>• Name 4 things you can touch</p>
+                    <p>• Name 3 things you can hear</p>
+                    <p>• Name 2 things you can smell</p>
+                    <p>• Name 1 thing you can taste</p>
+                    <p>This helps bring you back to the present moment and reduce anxiety.</p>
+                </div>
+            `;
+        }
+
+        // Emergency Functions
+        function emergencyAlert() {
+            if (confirm('This will open emergency resources. Do you need immediate help?')) {
+                const alertDiv = document.createElement('div');
+                alertDiv.innerHTML = `
+                    <div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 15px; box-shadow: 0 20px 40px rgba(0,0,0,0.3); z-index: 1000; max-width: 400px;">
+                        <h3 style="color: #e53e3e; margin-bottom: 15px;">🆘 Emergency Resources</h3>
+                        <p><strong>US Crisis Hotline:</strong> 988</p>
+                        <p><strong>Crisis Text Line:</strong> Text HOME to 741741</p>
+                        <p><strong>International:</strong> <a href="https://findahelpline.com" target="_blank">findahelpline.com</a></p>
+                        <button onclick="this.parentElement.parentElement.remove()" style="background: #667eea; color: white; border: none; padding: 10px 20px; border-radius: 5px; margin-top: 15px;">Close</button>
+                    </div>
+                `;
+                document.body.appendChild(alertDiv);
+            }
+        }
+
+        function sendEmergencyAlert() {
+            alert('Emergency alert feature would send your location and a pre-written message to your emergency contacts. In a real implementation, this would integrate with SMS/email services.');
+        }
+
+        // Music and Quotes
+        function playMoodMusic(mood) {
+            const player = document.getElementById('musicPlayer');
+            player.classList.remove('hidden');
+            
+            const musicTitles = {
+                'happy': '🎵 Now Playing: Uplifting Instrumental',
+                'calm': '🎵 Now Playing: Peaceful Nature Sounds',
+                'energetic': '🎵 Now Playing: Motivational Beats'
+            };
+            
+            player.innerHTML = `
+                <p>${musicTitles[mood]}</p>
+                <p style="font-size: 14px; color: #666;">Music would play here in a full implementation</p>
+            `;
+        }
+
+        function getNewQuote() {
+            const quotes = [
+                "Every day is a new beginning. Take a deep breath, smile, and start again.",
+                "You are stronger than you think and more resilient than you realize.",
+                "Progress, not perfection, is the goal.",
+                "Your mental health is a priority. Your happiness is essential.",
+                "It's okay to not be okay. It's not okay to stay that way.",
+                "Self-care is not selfish. You cannot serve from an empty vessel."
+                            ]}
